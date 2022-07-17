@@ -1,13 +1,4 @@
 import _ from 'lodash'
-export * from './router.js'
-
-export const isFunction = (value: any): boolean => typeof value === 'function'
-export const isConstructor = (value: any): boolean => value === 'constructor'
-export const isNil = (value: any): value is null | undefined => typeof value === 'undefined' || value === null
-export const isEmpty = (value: any) => isNil(value) || value?.length === 0
-
-export const getClassMethodName = (prototype: any) =>
-    Object.getOwnPropertyNames(prototype).filter(prop => !isConstructor(prop) && isFunction(prototype[prop]))
 
 export const addLeadingSlash = (path: string) => {
     if (path.charAt(0) !== '/' && path.length > 0) {
@@ -15,16 +6,6 @@ export const addLeadingSlash = (path: string) => {
     }
     return path
 }
-
-export const getParamCount = (metadata: any) => {
-    return metadata?.length ? Math.max(...metadata.map(n => n.index)) + 1 : 0
-}
-
-export const isValidatable = (paramType: any) => {
-    const invalidType = [String, Boolean, Number, Array, Object, Buffer]
-    return !invalidType.some(t => paramType === t) && !isNil(paramType)
-}
-
 
 export const guard = (condition: boolean, message: string) => {
     if (!condition) {

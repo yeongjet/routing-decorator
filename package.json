@@ -5,7 +5,8 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "test": "ts-node test/app.ts"
+    "build": "tsc",
+    "test": "ts-node test/case-1/app.ts"
   },
   "files": [
     "dist"
@@ -17,18 +18,20 @@
     "controller",
     "decorator"
   ],
-  "author": "",
+  "author": "harveydavis <harveydavis680@gmail.com>;",
   "license": "MIT",
   "dependencies": {
     "lodash": "^4.17.21",
-    "reflect-metadata": "^0.1.13"
+    "reflect-metadata": "^0.1.13",
+    "secure-json-parse": "^2.4.0"
   },
   "devDependencies": {
     "@types/lodash": "^4.14.182",
-    "@types/node": "^18.0.3",
+    "@types/node": "^18.0.5",
     "eslint": "^8.19.0",
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.2.1",
+    "find-my-way": "^7.0.0",
     "prettier": "^2.7.1",
     "typescript": "^4.7.4"
   },

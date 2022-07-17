@@ -1,15 +1,13 @@
-export const HTTP_METHOD_METADATA = 'routing-decorator/http:method'
-export const HTTP_ROUTE_PATH_METADATA = 'routing-decorator/http:route-path'
-export const PARAM_METADATA = 'routing-decorator/param'
 export const PARAM_TYPE_METADATA = 'design:paramtypes'
 
-export enum HttpMethod {
+export type RequestMethodName = keyof typeof RequestMethod
+
+export enum RequestMethod {
     GET,
     POST,
     PUT,
     DELETE,
     PATCH,
-    ALL,
     OPTIONS,
     HEAD
 }
@@ -20,7 +18,7 @@ export enum InjectParamType {
     BODY,
     QUERY,
     PARAM,
-    HEADER,
+    HEADERS,
     SESSION,
     HOST,
     IP

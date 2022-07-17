@@ -1,12 +1,12 @@
-import { createHttpRouteParamDecorator } from '../decorator-generator.js'
+import { createParamDecorator } from '../builder'
 import { InjectParamType } from '../common'
 
-export const Request = createHttpRouteParamDecorator(InjectParamType.REQUEST)
-export const Response = createHttpRouteParamDecorator(InjectParamType.RESPONSE)
-export const Body = createHttpRouteParamDecorator(InjectParamType.BODY)
-export const Query = createHttpRouteParamDecorator(InjectParamType.QUERY)
-export const Param = createHttpRouteParamDecorator(InjectParamType.PARAM)
-export const Header = createHttpRouteParamDecorator(InjectParamType.HEADER)
-export const Session = createHttpRouteParamDecorator(InjectParamType.SESSION)
-export const Host = createHttpRouteParamDecorator(InjectParamType.HOST)
-export const IP = createHttpRouteParamDecorator(InjectParamType.IP)
+export const Request = createParamDecorator(InjectParamType.REQUEST)
+export const Response = createParamDecorator(InjectParamType.RESPONSE)
+export const Body = createParamDecorator(InjectParamType.BODY)
+export const Query = createParamDecorator(InjectParamType.QUERY)
+export const Param = createParamDecorator(InjectParamType.PARAM)
+export const Headers = createParamDecorator(InjectParamType.HEADERS)
+export const Session = createParamDecorator(InjectParamType.SESSION)
+export const Host = createParamDecorator(InjectParamType.HOST)
+export const IP = createParamDecorator(InjectParamType.IP)

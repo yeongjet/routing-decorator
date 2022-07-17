@@ -1,11 +1,10 @@
-import { createHttpMethodDecorator } from '../decorator-generator.js'
-import { HttpMethod } from '../common'
+import { createRequestMethodDecorator } from '../builder'
+import { RequestMethod } from '../common'
 
-export const Post = createHttpMethodDecorator(HttpMethod.POST)
-export const Get = createHttpMethodDecorator(HttpMethod.GET)
-export const Delete = createHttpMethodDecorator(HttpMethod.DELETE)
-export const Put = createHttpMethodDecorator(HttpMethod.PUT)
-export const Patch = createHttpMethodDecorator(HttpMethod.PATCH)
-export const Options = createHttpMethodDecorator(HttpMethod.OPTIONS)
-export const Head = createHttpMethodDecorator(HttpMethod.HEAD)
-export const All = createHttpMethodDecorator(HttpMethod.ALL)
+export const Post = createRequestMethodDecorator(RequestMethod.POST)
+export const Get = createRequestMethodDecorator(RequestMethod.GET)
+export const Delete = createRequestMethodDecorator(RequestMethod.DELETE)
+export const Put = createRequestMethodDecorator(RequestMethod.PUT)
+export const Patch = createRequestMethodDecorator(RequestMethod.PATCH)
+export const Options = createRequestMethodDecorator(RequestMethod.OPTIONS)
+export const Head = createRequestMethodDecorator(RequestMethod.HEAD)
