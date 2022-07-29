@@ -1,5 +1,5 @@
-import { createRequestMethodDecorator } from '../builder'
 import { RequestMethod } from '../common'
+import { createRequestMethodDecorator } from '../builder'
 
 export const Post = createRequestMethodDecorator(RequestMethod.POST)
 export const Get = createRequestMethodDecorator(RequestMethod.GET)

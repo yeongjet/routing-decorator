@@ -12,6 +12,7 @@ export interface Param {
 
 export interface Route {
     handler: Function
+    handlerName: string
     requestMethod?: RequestMethod
     url?: string
     injectParams: Param[]
@@ -19,6 +20,7 @@ export interface Route {
 }
 
 export interface Controller {
+    name: string
     prefix: string
     routes: Route[]
 }

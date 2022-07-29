@@ -40,50 +40,45 @@ export const get = (target: object, ...keys: (string | Record<string, string | n
     return target
 }
 
-export const set = (
-    target: object,
-    params: ([key: string | Record<string, any>, initial?: any] | string)[],
-    value: object | any
-) => {
-    for (let i = 0; i < params.length; i++) {
-        const param = params[i]
-        let parent: any = param
+export const isValidKey = (name?: string) => _.isString(name) && name.length > 0
+
+export const set = (target: any, keys: (string | Record<string, any>)[], values: any[]) => {
+    for (let i = 0; i < keys.length; i++) {
+        const key = keys[i]
+        let parent: any
         let parentKey
-        guard(_.isString(param) || _.isArray(param), `the index:${i} of params:${params} is invalid`)
-        if (_.isString(param)) {
-            parent = target
-            parentKey = param
-            target = target[param]
-        } else if (_.isArray(param)) {
-            const [key, initial] = param
-            guard(
-                _.isString(key) || (_.isArray(target) && _.isObject(key)),
-                `the key:${key}(${typeof key}) of ${target}(${typeof target}) is invalid`
-            )
-            if (_.isString(key)) {
-                parentKey = key
-                if (_.isUndefined(target[key]) && initial) {
-                    target[key] = initial
-                }
-                parent = target
-                target = target[key]
-            } else if (_.isArray(target) && _.isObject(key)) {
-                if (_.isEmpty(target) && initial) {
-                    target.push(initial)
-                }
-                parent = target
-                target = target.find(n => isContain(n, key))
+        guard(_.isString(key) || _.isObject(key), `the key:${key}(${typeof key}) of ${target}(${typeof target}) is invalid`)
+        if (_.isString(key)) {
+            parentKey = key
+            if (_.isUndefined(target[key]) && values[i]) {
+                target[key] = values[i]
             }
+            parent = target
+            target = target[key]
+        } else if (_.isObject(key)) {
+            const subKey = Object.keys(key)[0]
+            guard(
+                _.isString(subKey) && _.isObject(key[subKey]),
+                `the key:${JSON.stringify(key)} of ${target}(${typeof target}) is invalid`
+            )
+            target = target[subKey]
+            guard(_.isArray(target), `the target:${target} must be array`)
+            let item = target.find(n => isContain(n, key[subKey]))
+            if (_.isUndefined(item) && values[i]) {
+                item = values[i]
+                target.push(item)
+            }
+            parent = target
+            target = item
         }
         guard(negate(_.isUndefined(target)), 'target is not found')
-        if (i === params.length - 1) {
+        if (i === keys.length - 1) {
             if (_.isArray(target)) {
-                target.push(value)
+                target.push(values[i])
             } else if (_.isObject(target)) {
-                Object.assign(target, value)
-            } else {
-                guard(_.isString(parentKey) && parentKey.length > 0, 'parentKey is not found as setting constant value')
-                parent[parentKey] = value
+                Object.assign(target, values[i + 1])
+            } else if(isValidKey(parentKey)) {
+                parent[parentKey] = values[i]
             }
         }
     }

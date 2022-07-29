@@ -33,7 +33,7 @@ const createParamGetter = (type: InjectParamType, key?: string) => (request, res
 export const createControllerDecorator =
     (prefix = ''): ClassDecorator =>
     (target: Function) => {
-        setController(target.name, { prefix })
+        setController(target.name, { prefix, name: target.name })
     }
 
 export const createParamDecorator =
