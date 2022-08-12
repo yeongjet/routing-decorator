@@ -1,6 +1,6 @@
 import _ from 'lodash'
 
-export const addLeadingSlash = (path: string) => {
+export const addLeadingSlash = (path: string = '/') => {
     if (path.charAt(0) !== '/' && path.length > 0) {
         return `/${path}`
     }
