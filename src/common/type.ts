@@ -12,7 +12,7 @@ export interface Param {
 
 export interface Route {
     handler: Function
-    handlerName: string
+    name: string
     requestMethod?: RequestMethod
     url?: string
     injectParams: Param[]

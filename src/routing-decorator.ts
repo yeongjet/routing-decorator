@@ -55,7 +55,7 @@ export class RoutingDecorator {
         controllers.map(controller => {
             const storageController = storage.getController(controller.constructor.name)
             if (storageController) {
-                storageController.routes.map(route => { route.handler = controller[route.handlerName].bind(controller) })
+                storageController.routes.map(route => { route.handler = controller[route.name].bind(controller) })
             }
         })
         return this

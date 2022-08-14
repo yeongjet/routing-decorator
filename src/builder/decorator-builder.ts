@@ -49,8 +49,8 @@ export const createParamDecorator =
 
 export const createRequestMethodDecorator =
     (requestMethod: RequestMethod) =>
-    (url?: string): MethodDecorator =>
+    (url: string = ''): MethodDecorator =>
     (target: Object, property: string | symbol, descriptor: TypedPropertyDescriptor<any>) => {
         const paramsType = Reflect.getMetadata(PARAM_TYPE_METADATA, target, property)
-        setRoute(target.constructor.name, { handler: target[property], requestMethod, url: addLeadingSlash(url), handlerParamsType: paramsType })
+        setRoute(target.constructor.name, { handler: target[property], requestMethod, url, handlerParamsType: paramsType })
     }
