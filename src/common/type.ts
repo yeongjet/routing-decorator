@@ -7,6 +7,7 @@ export type Handler = (req: any, res: any) => any
 export interface Param {
     type: InjectParamType,
     index: number,
+    selectKey?: string,
     getter: (req: any, res: any) => any
 }
 

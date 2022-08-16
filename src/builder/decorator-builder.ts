@@ -43,6 +43,7 @@ export const createParamDecorator =
         setParam(target.constructor.name, target[property], {
             type: paramType,
             index,
+            selectKey,
             getter: createParamGetter(paramType, selectKey)
         })
     }
