@@ -31,12 +31,13 @@ export class RoutingDecorator {
                 const { requestMethod, url } = route
                 guard(negate(_.isNil(requestMethod) || !_.isString(url)), 'requestMethod and url must be set')
                 bind(RequestMethod[requestMethod!] as RequestMethodName, `${controller.prefix}${url as string}`, (request, response) => {
-                    const { handler, injectParams, handlerParamsType } = route
-                    const handlerParams: any[] = new Array(handlerParamsType.length).fill(undefined)
-                    for(const { index, getter } of injectParams) {
+                    const { handler, params, paramsCount } = route
+                    guard(negate(_.isNil(handler)), 'handler must be set')
+                    const handlerParams: any[] = new Array(paramsCount).fill(undefined)
+                    for(const { index, getter, type } of params) {
                         let requestParam = getter(request, response)
                         if (validateOption?.handler) {
-                            const validatedParam = validateOption?.handler(handlerParamsType[index], requestParam, { request, response })
+                            const validatedParam = validateOption?.handler(type, requestParam, { request, response })
                             if (_.isNil(validatedParam) && !validateOption.continueOnError) {
                                 return
                             }
@@ -44,7 +45,7 @@ export class RoutingDecorator {
                         }
                         handlerParams[index] = requestParam
                     }
-                    return handler(...handlerParams)
+                    return (handler as Function)(...handlerParams)
                 })
             })
         })

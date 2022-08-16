@@ -11,15 +11,3 @@ export enum RequestMethod {
     OPTIONS,
     HEAD
 }
-
-export enum InjectParamType {
-    REQUEST,
-    RESPONSE,
-    BODY,
-    QUERY,
-    PARAM,
-    HEADERS,
-    SESSION,
-    HOST,
-    IP
-}

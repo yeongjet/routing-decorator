@@ -1,29 +1,29 @@
 import 'reflect-metadata'
 import _ from 'lodash'
 import { setParam, setRoute, setController } from '../storage'
-import { InjectParamType, RequestMethod, PARAM_TYPE_METADATA } from '../common'
+import { ParamSource, RequestMethod, PARAM_TYPE_METADATA, Property } from '../common'
 import { addLeadingSlash } from '../util'
 
-const createParamGetter = (type: InjectParamType, key?: string) => (request, response) => {
+const createParamGetter = (type: ParamSource, key?: string) => (request, response) => {
     switch (type) {
-        case InjectParamType.REQUEST:
+        case ParamSource.REQUEST:
             return request as any
-        case InjectParamType.RESPONSE:
+        case ParamSource.RESPONSE:
             return response as any
-        case InjectParamType.BODY:
+        case ParamSource.BODY:
             return key && request.body ? request.body[key] : request.body
-        case InjectParamType.PARAM:
+        case ParamSource.PARAM:
             return key ? request.params[key] : request.params
-        case InjectParamType.HOST:
+        case ParamSource.HOST:
             const hosts = request.hosts || {}
             return key ? hosts[key] : hosts
-        case InjectParamType.QUERY:
+        case ParamSource.QUERY:
             return key ? request.query[key] : request.query
-        case InjectParamType.HEADERS:
+        case ParamSource.HEADERS:
             return key ? request.headers[key.toLowerCase()] : request.headers
-        case InjectParamType.SESSION:
+        case ParamSource.SESSION:
             return request.session
-        case InjectParamType.IP:
+        case ParamSource.IP:
             return request.ip
         default:
             return null
@@ -33,25 +33,27 @@ const createParamGetter = (type: InjectParamType, key?: string) => (request, res
 export const createControllerDecorator =
     (prefix = ''): ClassDecorator =>
     (target: Function) => {
-        setController(target.name, { prefix, name: target.name })
+        setController(target.name, { prefix })
     }
 
 export const createParamDecorator =
-    (paramType: InjectParamType) =>
+    (paramSource: ParamSource) =>
     (selectKey?: string): ParameterDecorator =>
-    (target: Object, property: string | symbol, index: number) => {
-        setParam(target.constructor.name, target[property], {
-            type: paramType,
+    (target: Object, property: Property, index: number) => {
+        const paramsType = Reflect.getMetadata(PARAM_TYPE_METADATA, target, property)
+        setParam(target.constructor.name, property, {
+            source: paramSource,
             index,
+            type: paramsType.at(index),
             selectKey,
-            getter: createParamGetter(paramType, selectKey)
+            getter: createParamGetter(paramSource, selectKey)
         })
     }
 
 export const createRequestMethodDecorator =
     (requestMethod: RequestMethod) =>
     (url?: string): MethodDecorator =>
-    (target: Object, property: string | symbol, descriptor: TypedPropertyDescriptor<any>) => {
+    (target: Object, property: Property, descriptor: TypedPropertyDescriptor<any>) => {
         const paramsType = Reflect.getMetadata(PARAM_TYPE_METADATA, target, property)
-        setRoute(target.constructor.name, { handler: target[property], requestMethod, url: url ? addLeadingSlash(url) : '', handlerParamsType: paramsType })
+        setRoute(target.constructor.name, property, { handler: target[property], requestMethod, url: url ? addLeadingSlash(url) : '', paramsCount: paramsType.length })
     }

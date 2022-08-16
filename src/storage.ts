@@ -1,36 +1,34 @@
 import _ from 'lodash'
-import { Storage, Controller, Route, Param, PartialRequired } from './common'
+import { Storage, Property } from './common'
 import { set } from './util'
 
-const getDefaultController = (): Controller => ({
-    name: '',
+const getDefaultController = (): Storage.Controller => ({
     prefix: '',
     routes: []
 })
 
-const getDefaultRoute = (routeName: string, handler: Function): Route => ({
+const getDefaultRoute = (routeName: Property): Storage.Route => ({
     name: routeName,
-    handler,
-    injectParams: [],
-    handlerParamsType: []
+    url: '',
+    params: [],
+    paramsCount: 0
 })
 
 export const storage: Storage = {}
 
-export const setParam = (controllerName: string, handler: Function, param: Param) => {
-    set(storage, [ controllerName, { routes: { handlerName: handler.name }}, 'injectParams' ], [ getDefaultController(), getDefaultRoute(handler.name, handler), param ])
+export const setParam = (controllerName: string, routeName: Property, param: Partial<Storage.Param>) => {
+    set(storage, [ controllerName, { routes: { name: routeName }}, 'params' ], [ getDefaultController(), getDefaultRoute(routeName), param ])
 }
 
-export const setRoute = (controllerName: string, route: PartialRequired<Route, 'handler'>) => {
-    const { handler } = route
-    set(storage, [ controllerName, { routes: { handlerName: handler.name }} ], [ getDefaultController(), getDefaultRoute(handler.name, handler), route ])
+export const setRoute = (controllerName: string, routeName: Property, route: Partial<Storage.Route>) => {
+    set(storage, [ controllerName, { routes: { name: routeName }} ], [ getDefaultController(), getDefaultRoute(routeName), route ])
 }
 
-export const setController = (controllerName: string, value: Partial<Controller>) => {
+export const setController = (controllerName: string, value: Partial<Storage.Controller>) => {
     set(storage, [ controllerName ], [ getDefaultController(), value ])
 }
 
-export const getRoute = (controllerName: string, routeName: string) => storage[controllerName].routes.find(n => n.name === routeName)
+export const getRoute = (controllerName: string, routeName: Property) => storage[controllerName].routes.find(n => n.name === routeName)
 
 export const getController = (controllerName: string) => storage[controllerName]
 
