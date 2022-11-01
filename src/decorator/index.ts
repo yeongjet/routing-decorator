@@ -1,3 +1,3 @@
 export * from './controller.decorator'
-export * from './http-method'
-export * from './route-param'
+export * from './request-method.decorator'
+export * from './parameter.decorator'

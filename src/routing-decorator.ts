@@ -1,7 +1,7 @@
-import { guard, negate } from './util'
-import { RequestMethod, RequestMethodName } from './common'
-import * as storage from './storage'
 import _ from 'lodash'
+import { guard, negate } from './util'
+import { RequestMethod, RequestMethodName } from './storage'
+import { storage } from './storage'
 
 export interface RoutingDecoratorOption {
     validation?: {
@@ -26,15 +26,15 @@ export class RoutingDecorator {
 
     bindRouter(bind: (requestMethod: RequestMethodName, url: string, handler: (request: any, response: any) => void) => void ) {
         const { validation: validateOption } = this.option
-        storage.getControllers().map(controller => {
-            controller.routes.map(route => {
-                const { requestMethod, url } = route
+        for(const [ controllerName, controllerStorage ] of Object.entries(storage.controllers ?? {})) {
+            for(const [ routeName, routeStorage ] of Object.entries(controllerStorage.routes ?? {})) {
+                const { requestMethod, url } = routeStorage
                 guard(negate(_.isNil(requestMethod) || !_.isString(url)), 'requestMethod and url must be set')
-                bind(RequestMethod[requestMethod!] as RequestMethodName, `${controller.prefix}${url as string}`, (request, response) => {
-                    const { handler, params, paramsCount } = route
+                bind(RequestMethod[requestMethod!] as RequestMethodName, `${controllerStorage.prefix}${url as string}`, (request, response) => {
+                    const { handler, bindingParameters, parameterCount } = routeStorage
                     guard(negate(_.isNil(handler)), 'handler must be set')
-                    const handlerParams: any[] = new Array(paramsCount).fill(undefined)
-                    for(const { index, getter, type } of params) {
+                    const handlerParams: any[] = new Array(parameterCount).fill(undefined)
+                    for(const { index, getter, type } of bindingParameters) {
                         let requestParam = getter(request, response)
                         if (validateOption?.handler) {
                             const validatedParam = validateOption?.handler(type, requestParam, { request, response })
@@ -47,16 +47,18 @@ export class RoutingDecorator {
                     }
                     return (handler as Function)(...handlerParams)
                 })
-            })
-        })
+            }
+        }
         return this
     }
 
-    bindControllers(controllers: Object[]) {
-        controllers.map(controller => {
-            const storageController = storage.getController(controller.constructor.name)
-            if (storageController) {
-                storageController.routes.map(route => { route.handler = controller[route.name].bind(controller) })
+    bindControllers(externalControllers: Object[]) {
+        externalControllers.map(externalController => {
+            const controllerStorage = (storage.controllers ?? {})[externalController.constructor.name]
+            if (controllerStorage) {
+                for(const [ routeName, routeStorage ] of Object.entries(controllerStorage.routes ?? {})) {
+                    routeStorage.handler = externalController[routeName].bind(externalController)
+                }
             }
         })
         return this

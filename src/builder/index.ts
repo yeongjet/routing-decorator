@@ -1,1 +1,1 @@
-export * from './decorator-builder'
+export * from './decorator.builder'
