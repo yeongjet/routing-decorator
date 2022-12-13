@@ -36,15 +36,13 @@ const createParamGetter = (binding: ParameterBinding, key?: string) => (request,
 
 export const createParameterBindingDecorator =
     (binding: ParameterBinding) =>
-    (selectKey?: string) =>
+    (selectKey?: string): ParameterDecorator =>
     (...[ target, property, index ]: ParameterDecoratorParams) => {
         guard(_.isString(property), `property name must be string`)
         set(storage, `controllers.${target.constructor.name}.routes.${property as string}.bindingParameters`, [
             {
-                binding,
                 index,
                 type: Reflect.getMetadata(PARAMETER_METADATA, target, property).at(index),
-                selectKey,
                 getter: createParamGetter(binding, selectKey)
             }
         ])
@@ -56,8 +54,8 @@ export const createRequestMethodDecorator =
     (...[ target, property ]: MethodDecoratorParams) => {
         guard(_.isString(property), `property name must be string`)
         const parameterCount = Reflect.getMetadata(PARAMETER_METADATA, target, property).length
-        set(storage, `controllers.${target.constructor.name}.routes.${property as string}`, {
-            handler: target[property],
+        set(storage, `controllers.${target.constructor.name}.routes.${property as string}.bindingHandler`, {
+            method: target[property],
             requestMethod,
             url: url ? addLeadingSlash(url) : '',
             parameterCount

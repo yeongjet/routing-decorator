@@ -1,3 +1,3 @@
 export * from './controller.decorator'
 export * from './request-method.decorator'
-export * from './parameter.decorator'
+export * from './parameter-binding.decorator'

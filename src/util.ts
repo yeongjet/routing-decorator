@@ -13,8 +13,6 @@ export const guard = (condition: boolean, message: string) => {
     }
 }
 
-export const negate = (value: boolean) => !value
-
 export const set = (obj: any, path: string, item: any) => {
     const value = _.get(obj, path)
     if (_.isArray(value)) {

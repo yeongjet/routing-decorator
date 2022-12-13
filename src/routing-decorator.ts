@@ -1,19 +1,9 @@
 import _ from 'lodash'
-import { guard, negate } from './util'
-import { RequestMethod, RequestMethodName } from './storage'
-import { storage } from './storage'
+import { guard } from './util'
+import { storage, RequestMethod, RequestMethodName } from './storage'
 
 export interface RoutingDecoratorOption {
-    validation?: {
-        continueOnError: boolean
-        handler?: (type: any, value: any, ctx: any) => any
-    }
-}
-
-const defaultOption: RoutingDecoratorOption = {
-    validation: {
-        continueOnError: false
-    }
+    transformRequestParameter?: (requestParameter: any, bindingParameterType: any, ctx: any) => any
 }
 
 export class RoutingDecorator {
@@ -21,31 +11,30 @@ export class RoutingDecorator {
     private option!: RoutingDecoratorOption
 
     constructor(option?: RoutingDecoratorOption) {
-        this.option = _.defaultsDeep(option, defaultOption)
+        this.option = option || {}
     }
 
     bindRouter(bind: (requestMethod: RequestMethodName, url: string, handler: (request: any, response: any) => void) => void ) {
-        const { validation: validateOption } = this.option
+        const { transformRequestParameter } = this.option
         for(const [ controllerName, controllerStorage ] of Object.entries(storage.controllers ?? {})) {
             for(const [ routeName, routeStorage ] of Object.entries(controllerStorage.routes ?? {})) {
-                const { requestMethod, url } = routeStorage
-                guard(negate(_.isNil(requestMethod) || !_.isString(url)), 'requestMethod and url must be set')
+                const { requestMethod, url, method, parameterCount } = routeStorage.bindingHandler
+                guard(!(_.isNil(requestMethod) || !_.isString(url)), 'requestMethod and url must be set')
                 bind(RequestMethod[requestMethod!] as RequestMethodName, `${controllerStorage.prefix}${url as string}`, (request, response) => {
-                    const { handler, bindingParameters, parameterCount } = routeStorage
-                    guard(negate(_.isNil(handler)), 'handler must be set')
-                    const handlerParams: any[] = new Array(parameterCount).fill(undefined)
-                    for(const { index, getter, type } of bindingParameters) {
-                        let requestParam = getter(request, response)
-                        if (validateOption?.handler) {
-                            const validatedParam = validateOption?.handler(type, requestParam, { request, response })
-                            if (_.isNil(validatedParam) && !validateOption.continueOnError) {
+                    guard(!_.isNil(method), 'handler method must be set')
+                    const handlerParameters: any[] = new Array(parameterCount).fill(undefined)
+                    for(const { index, getter, type } of routeStorage.bindingParameters || []) {
+                        let requestParameter = getter(request, response)
+                        if (transformRequestParameter) {
+                            const transformedParameter = transformRequestParameter(requestParameter, type, { request, response })
+                            if (_.isNil(transformedParameter)) {
                                 return
                             }
-                            requestParam = validatedParam
+                            requestParameter = transformedParameter
                         }
-                        handlerParams[index] = requestParam
+                        handlerParameters[index] = requestParameter
                     }
-                    return (handler as Function)(...handlerParams)
+                    return (method as Function)(...handlerParameters)
                 })
             }
         }
@@ -57,7 +46,7 @@ export class RoutingDecorator {
             const controllerStorage = (storage.controllers ?? {})[externalController.constructor.name]
             if (controllerStorage) {
                 for(const [ routeName, routeStorage ] of Object.entries(controllerStorage.routes ?? {})) {
-                    routeStorage.handler = externalController[routeName].bind(externalController)
+                    routeStorage.bindingHandler.method = externalController[routeName].bind(externalController)
                 }
             }
         })

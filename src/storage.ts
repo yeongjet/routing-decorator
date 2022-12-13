@@ -22,33 +22,37 @@ export enum ParameterBinding {
     IP
 }
 
-export interface Parameter {
-    binding: ParameterBinding
-    index: number
-    type: any
-    selectKey?: string
-    getter: (req: any, res: any) => any
+export namespace Storage {
+    export interface Parameter {
+        index: number
+        type?: any
+        getter: (request: any, response: any) => any
+    }
+    
+    export interface Handler {
+        method?: Function
+        requestMethod?: RequestMethod
+        url: string
+        parameterCount: number
+    }
+    
+    export interface Route {
+        bindingHandler: Handler
+        bindingParameters: Parameter[]
+    }
+    
+    export interface Routes extends Record<string, Route> {}
+    
+    export interface Controller {
+        prefix: string
+        routes?: Routes
+    }
+    
+    export interface Controllers extends Record<string, Controller> {}
 }
-
-export interface Route {
-    handler?: Function
-    requestMethod?: RequestMethod
-    url: string
-    bindingParameters: Parameter[]
-    parameterCount: number
-}
-
-export interface Routes extends Record<string, Route> {}
-
-export interface Controller {
-    prefix: string
-    routes?: Routes
-}
-
-export interface Controllers extends Record<string, Controller> {}
 
 export type Storage = {
-    controllers?: Controllers
+    controllers?: Storage.Controllers
 }
 
 export const storage: Storage = {}

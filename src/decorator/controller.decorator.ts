@@ -4,6 +4,6 @@ import { ClassDecoratorParams } from '../interface'
 
 export function Controller (prefix = '') {
     return (...[ target ]: ClassDecoratorParams) => {
-        set(storage, `controllers.${target.constructor.name}.prefix`, addLeadingSlash(prefix))
+        set(storage, `controllers.${target.name}.prefix`, addLeadingSlash(prefix))
     }
 }
