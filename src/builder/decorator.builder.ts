@@ -39,7 +39,7 @@ export const createParameterBindingDecorator =
     (selectKey?: string): ParameterDecorator =>
     (...[ target, property, index ]: ParameterDecoratorParams) => {
         guard(_.isString(property), `property name must be string`)
-        set(storage, `controllers.${target.constructor.name}.routes.${property as string}.bindingParameters`, [
+        set(storage, `controllers.${target.constructor.name}.routes.${property as string}.parametersInjected`, [
             {
                 index,
                 type: Reflect.getMetadata(PARAMETER_METADATA, target, property).at(index),
@@ -53,11 +53,9 @@ export const createRequestMethodDecorator =
     (url?: string): MethodDecorator =>
     (...[ target, property ]: MethodDecoratorParams) => {
         guard(_.isString(property), `property name must be string`)
-        const parameterCount = Reflect.getMetadata(PARAMETER_METADATA, target, property).length
-        set(storage, `controllers.${target.constructor.name}.routes.${property as string}.bindingHandler`, {
-            method: target[property],
-            requestMethod,
-            url: url ? addLeadingSlash(url) : '',
-            parameterCount
-        })
+        const routeBindingSetPath = `controllers.${target.constructor.name}.routes.${property as string}`
+        set(storage, `${routeBindingSetPath}.handler`, target[property])
+        set(storage, `${routeBindingSetPath}.requestMethod`, requestMethod)
+        set(storage, `${routeBindingSetPath}.url`,  url ? addLeadingSlash(url) : '')
+        set(storage, `${routeBindingSetPath}.handlerParametersCount`, Reflect.getMetadata(PARAMETER_METADATA, target, property).length)
     }

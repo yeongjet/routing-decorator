@@ -23,25 +23,21 @@ export enum ParameterBinding {
 }
 
 export namespace Storage {
-    export interface Parameter {
+    export interface BindingParameter {
         index: number
         type?: any
         getter: (request: any, response: any) => any
     }
     
-    export interface Handler {
-        method?: Function
+    export interface RouteBinding {
+        handler?: Function
         requestMethod?: RequestMethod
         url: string
-        parameterCount: number
+        handlerParametersCount: number
+        parametersInjected: BindingParameter[]
     }
-    
-    export interface Route {
-        bindingHandler: Handler
-        bindingParameters: Parameter[]
-    }
-    
-    export interface Routes extends Record<string, Route> {}
+
+    export interface Routes extends Record<string, RouteBinding> {}
     
     export interface Controller {
         prefix: string
