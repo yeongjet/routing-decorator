@@ -1,7 +1,7 @@
 {
   "name": "routing-decorator",
   "version": "0.0.1",
-  "description": "Decorator for router binding",
+  "description": "Decorators of router binding",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -12,30 +12,36 @@
     "dist"
   ],
   "keywords": [
+    "koa",
+    "express",
     "routing",
     "route",
     "router",
     "controller",
     "decorator"
   ],
-  "author": "harveydavis <harveydavis680@gmail.com>;",
+  "author": "yeongjet <625436194@163.com>;",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yeongjet/routing-decorator.git"
+  },
   "dependencies": {
     "lodash": "^4.17.21",
     "reflect-metadata": "^0.1.13",
-    "secure-json-parse": "^2.6.0",
-    "type-fest": "^3.5.0"
+    "secure-json-parse": "^2.7.0",
+    "type-fest": "^3.10.0"
   },
   "devDependencies": {
-    "@types/lodash": "^4.14.191",
-    "@types/node": "^18.11.18",
+    "@types/lodash": "^4.14.194",
+    "@types/node": "^18.16.9",
     "del-cli": "^5.0.0",
-    "eslint": "^8.30.0",
-    "eslint-config-prettier": "^8.5.0",
+    "eslint": "^8.40.0",
+    "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-prettier": "^4.2.1",
-    "find-my-way": "^7.3.1",
-    "prettier": "^2.8.1",
-    "typescript": "^4.9.4"
+    "find-my-way": "^7.6.2",
+    "prettier": "^2.8.8",
+    "typescript": "^5.0.4"
   },
   "engines": {
     "node": ">=14.16"

@@ -1,5 +1,5 @@
 import 'reflect-metadata'
-import _ from 'lodash'
+import { isString } from 'lodash'
 import { addLeadingSlash, guard, set } from '../util'
 import { storage, RequestMethod, ParameterBinding } from '../storage'
 import { MethodDecoratorParams, ParameterDecoratorParams } from '../interface'
@@ -38,11 +38,11 @@ export const createParameterBindingDecorator =
     (binding: ParameterBinding) =>
     (selectKey?: string): ParameterDecorator =>
     (...[ target, property, index ]: ParameterDecoratorParams) => {
-        guard(_.isString(property), `property name must be string`)
+        guard(isString(property), `property name must be string`)
         set(storage, `controllers.${target.constructor.name}.routes.${property as string}.parametersInjected`, [
             {
                 index,
-                type: Reflect.getMetadata(PARAMETER_METADATA, target, property).at(index),
+                type: Reflect.getMetadata(PARAMETER_METADATA, target, property as string).at(index),
                 getter: createParamGetter(binding, selectKey)
             }
         ])
@@ -52,10 +52,10 @@ export const createRequestMethodDecorator =
     (requestMethod: RequestMethod) =>
     (url?: string): MethodDecorator =>
     (...[ target, property ]: MethodDecoratorParams) => {
-        guard(_.isString(property), `property name must be string`)
+        guard(isString(property), `property name must be string`)
         const routeBindingSetPath = `controllers.${target.constructor.name}.routes.${property as string}`
-        set(storage, `${routeBindingSetPath}.handler`, target[property])
+        set(storage, `${routeBindingSetPath}.handler`, target[property as string])
         set(storage, `${routeBindingSetPath}.requestMethod`, requestMethod)
         set(storage, `${routeBindingSetPath}.url`,  url ? addLeadingSlash(url) : '')
-        set(storage, `${routeBindingSetPath}.handlerParametersCount`, Reflect.getMetadata(PARAMETER_METADATA, target, property).length)
+        set(storage, `${routeBindingSetPath}.handlerParametersCount`, Reflect.getMetadata(PARAMETER_METADATA, target, property as string).length)
     }

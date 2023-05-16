@@ -1,4 +1,4 @@
-export type PropertyKey = string | symbol
+export type PropertyKey = string | symbol | undefined
 
 export type ClassDecoratorParams = [
     target: Function
