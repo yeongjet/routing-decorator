@@ -22,10 +22,10 @@ export class RoutingDecorator {
                 bind(RequestMethod[routeBinding.requestMethod!] as RequestMethodName, `${controller.prefix}${routeBinding.url as string}`, (request, response) => {
                     guard(!_.isNil(routeBinding.handler), 'handler method must be set')
                     const handlerParameters: any[] = new Array(routeBinding.handlerParametersCount).fill(undefined)
-                    for(const { index, getter, type } of routeBinding.parametersInjected || []) {
+                    for(const { index, getter, metadataType } of routeBinding.parametersInjected || []) {
                         let requestParameter = getter(request, response)
                         if (onReceivedParameter) {
-                            const processedParameter = onReceivedParameter(requestParameter, type, { request, response })
+                            const processedParameter = onReceivedParameter(requestParameter, metadataType, { request, response })
                             if (_.isNil(processedParameter)) {
                                 return
                             }

@@ -1,33 +1,33 @@
 import 'reflect-metadata'
 import { isString } from 'lodash'
 import { addLeadingSlash, guard, set } from '../util'
-import { storage, RequestMethod, ParameterBinding } from '../storage'
+import { storage, RequestMethod, ParameterBindingType } from '../storage'
 import { MethodDecoratorParams, ParameterDecoratorParams } from '../interface'
 
 export const PARAMETER_METADATA = 'design:paramtypes'
 
 export type PropertyKey = string | symbol
 
-const createParamGetter = (binding: ParameterBinding, key?: string) => (request, response) => {
-    switch (binding) {
-        case ParameterBinding.REQUEST:
+const createParamGetter = (bindingType: ParameterBindingType, key?: string) => (request, response) => {
+    switch (bindingType) {
+        case ParameterBindingType.REQUEST:
             return request as any
-        case ParameterBinding.RESPONSE:
+        case ParameterBindingType.RESPONSE:
             return response as any
-        case ParameterBinding.BODY:
+        case ParameterBindingType.BODY:
             return key && request.body ? request.body[key] : request.body
-        case ParameterBinding.PARAM:
+        case ParameterBindingType.PARAM:
             return key ? request.params[key] : request.params
-        case ParameterBinding.HOST:
+        case ParameterBindingType.HOST:
             const hosts = request.hosts || {}
             return key ? hosts[key] : hosts
-        case ParameterBinding.QUERY:
+        case ParameterBindingType.QUERY:
             return key ? request.query[key] : request.query
-        case ParameterBinding.HEADERS:
+        case ParameterBindingType.HEADERS:
             return key ? request.headers[key.toLowerCase()] : request.headers
-        case ParameterBinding.SESSION:
+        case ParameterBindingType.SESSION:
             return request.session
-        case ParameterBinding.IP:
+        case ParameterBindingType.IP:
             return request.ip
         default:
             return null
@@ -35,15 +35,17 @@ const createParamGetter = (binding: ParameterBinding, key?: string) => (request,
 }
 
 export const createParameterBindingDecorator =
-    (binding: ParameterBinding) =>
+    (bindingType: ParameterBindingType) =>
     (selectKey?: string): ParameterDecorator =>
     (...[ target, property, index ]: ParameterDecoratorParams) => {
         guard(isString(property), `property name must be string`)
         set(storage, `controllers.${target.constructor.name}.routes.${property as string}.parametersInjected`, [
             {
                 index,
-                type: Reflect.getMetadata(PARAMETER_METADATA, target, property as string).at(index),
-                getter: createParamGetter(binding, selectKey)
+                metadataType: Reflect.getMetadata(PARAMETER_METADATA, target, property as string).at(index),
+                getter: createParamGetter(bindingType, selectKey),
+                bindingType,
+                selectKey
             }
         ])
     }

@@ -1,12 +1,12 @@
-import { ParameterBinding } from '../storage'
+import { ParameterBindingType } from '../storage'
 import { createParameterBindingDecorator } from '../builder'
 
-export const Request = createParameterBindingDecorator(ParameterBinding.REQUEST)
-export const Response = createParameterBindingDecorator(ParameterBinding.RESPONSE)
-export const Body = createParameterBindingDecorator(ParameterBinding.BODY)
-export const Query = createParameterBindingDecorator(ParameterBinding.QUERY)
-export const Param = createParameterBindingDecorator(ParameterBinding.PARAM)
-export const Headers = createParameterBindingDecorator(ParameterBinding.HEADERS)
-export const Session = createParameterBindingDecorator(ParameterBinding.SESSION)
-export const Host = createParameterBindingDecorator(ParameterBinding.HOST)
-export const IP = createParameterBindingDecorator(ParameterBinding.IP)
+export const Request = createParameterBindingDecorator(ParameterBindingType.REQUEST)
+export const Response = createParameterBindingDecorator(ParameterBindingType.RESPONSE)
+export const Body = createParameterBindingDecorator(ParameterBindingType.BODY)
+export const Query = createParameterBindingDecorator(ParameterBindingType.QUERY)
+export const Param = createParameterBindingDecorator(ParameterBindingType.PARAM)
+export const Headers = createParameterBindingDecorator(ParameterBindingType.HEADERS)
+export const Session = createParameterBindingDecorator(ParameterBindingType.SESSION)
+export const Host = createParameterBindingDecorator(ParameterBindingType.HOST)
+export const IP = createParameterBindingDecorator(ParameterBindingType.IP)

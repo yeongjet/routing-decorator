@@ -10,7 +10,7 @@ export enum RequestMethod {
     HEAD
 }
 
-export enum ParameterBinding {
+export enum ParameterBindingType {
     REQUEST,
     RESPONSE,
     BODY,
@@ -23,10 +23,13 @@ export enum ParameterBinding {
 }
 
 export namespace Storage {
-    export interface BindingParameter {
+
+    export interface ParameterBinding {
         index: number
-        type?: any
-        getter: (request: any, response: any) => any
+        metadataType?: any
+        getter: (request: any, response: any) => any,
+        bindingType: ParameterBindingType,
+        selectKey?: string
     }
     
     export interface RouteBinding {
@@ -34,7 +37,7 @@ export namespace Storage {
         requestMethod?: RequestMethod
         url: string
         handlerParametersCount: number
-        parametersInjected: BindingParameter[]
+        parametersInjected: ParameterBinding[]
     }
 
     export interface Routes extends Record<string, RouteBinding> {}
